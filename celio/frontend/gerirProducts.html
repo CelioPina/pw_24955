@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <title>Opções de Produto</title>
+  
+  <script>
+    function redirectToPage(page) {
+      window.location.href = page;
+    }
+  </script>
+
+<header>
+    <div class="logo">
+        <a href="indexx.html"><img src="./img/logo.png" alt="Vinyl Records Logo"></a>
+       <h1><a href="indexx.html">VINYL RECORDS</a></h1>
+       <link rel="stylesheet" type="text/css" href="style.css">
+     </div>
+     <div class="search-bar">
+       <input type="text" id="search-input" placeholder="Search...">
+       <button id="search-btn" aria-label="Search">
+         <i class="fas fa-search"></i>
+       </button>
+     </div>    
+     <div class="user-actions">
+       <button id="home-btn"> <i class="fas fa-home"></i><a href="indexx.html">Home</a></button>
+     </div>
+   </header>
+</head>
+<body>
+<br>
+  <section id="product-list" >
+    <h2>Products List</h2>
+    <div class="vinyl-admin vinyl"></div>
+    <div class="form-product " ></div>
+  </section>
+  
+</body>
+
+<footer>
+    <p>&copy; 2023 Vinyl Records Store. All rights reserved.</p>
+  </footer>
+
+<script>
+     window.addEventListener('DOMContentLoaded', () => {
+    loadVinylsAdmin();
+  });
+  function loadVinylsAdmin() {
+  fetch("http://localhost:4242/api/products")
+    .then((response) => response.json())
+    .then((data) => {
+      const vinylContainer = document.querySelector(".vinyl-admin");
+      vinylContainer.innerHTML = "";
+      data.forEach((release) => {
+        const productCard = document.createElement("div");
+        productCard.classList.add("product-card");
+
+        const productImage = document.createElement("div");
+        productImage.classList.add("product-image");
+        const image = document.createElement("img");
+        image.src = release.imageUrl;
+        image.alt = "Product Image";
+        productImage.appendChild(image);
+        productCard.appendChild(productImage);
+
+        const productDetails = document.createElement("div");
+        productDetails.classList.add("product-details");
+
+        const title = document.createElement("h3");
+        title.classList.add("title");
+        title.textContent = release.title;
+        productDetails.appendChild(title);
+
+        const artist = document.createElement("p");
+        artist.classList.add("artist");
+        artist.textContent = release.artist;
+        productDetails.appendChild(artist);
+
+        const genre = document.createElement("p");
+        genre.classList.add("genre");
+        genre.textContent = release.genre;
+        productDetails.appendChild(genre);
+
+        const priceContainer = document.createElement("div");
+        priceContainer.classList.add("price-container");
+
+        const price = document.createElement("p");
+        price.classList.add("price");
+        price.textContent = release.price.toFixed(2) + " €";
+        priceContainer.appendChild(price);
+
+        const editButton = document.createElement("button");
+        editButton.classList.add("edit-button");
+        editButton.textContent = "Edit";
+        priceContainer.appendChild(editButton);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("delete-button");
+        deleteButton.textContent = "Delete";
+        priceContainer.appendChild(deleteButton);
+
+        productDetails.appendChild(priceContainer);
+        productCard.appendChild(productDetails);
+        vinylContainer.appendChild(productCard);
+
+        // Add event listener to edit button
+        editButton.addEventListener("click", () => {
+          editProduct(release);
+        });
+
+        // Add event listener to delete button
+        deleteButton.addEventListener("click", () => {
+          deleteProduct(release.id);
+        });
+      });
+
+      // Create "Adicionar Produto" button
+      const addProductButton = document.createElement("button");
+      addProductButton.classList.add("add-product-button", "product-card");
+      addProductButton.textContent = "Add Product";
+      vinylContainer.appendChild(addProductButton);
+
+      // Add event listener to "Adicionar Produto" button
+      addProductButton.addEventListener("click", () => {
+        showAddProductForm();
+      });
+    })
+    .catch((error) => {
+      console.error("Error loading vinyls in admin page:", error);
+    });
+}
+
+function editProduct(release) {
+  const editProductForm = document.getElementById("edit-product-form");
+
+  if (editProductForm) {
+    editProductForm.remove();
+    return;
+  }
+
+  editProductForm = document.createElement("form");
+  editProductForm.id = "edit-product-form";
+  editProductForm.classList.add("form-product");
+
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Título:";
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.name = "title";
+  titleInput.required = true;
+  titleInput.value = release.title;
+
+  // Rest of the form elements...
+
+  const updateButton = document.createElement("button");
+  updateButton.type = "submit";
+  updateButton.textContent = "Atualizar";
+
+  editProductForm.appendChild(titleLabel);
+  editProductForm.appendChild(titleInput);
+  // Append the rest of the form elements...
+
+  editProductForm.appendChild(updateButton);
+
+  const vinylContainer = document.querySelector(".form-product");
+  vinylContainer.appendChild(editProductForm);
+
+  // Add event listener to submit button
+  editProductForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const updatedProduct = {
+      title: titleInput.value,
+      // Get the values of the other form inputs...
+    };
+
+    const token = localStorage.getItem("token-iusabndkjanbksd");
+    if (!token) {
+      return;
+    }
+
+    fetch(`http://localhost:4242/api/products/${release.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedProduct)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Product updated successfully:", data);
+      
+      editProductForm.reset();
+      location.reload();
+      
+    })
+    .catch(error => {
+      console.error("Error updating product:", error);
+      // Show error message to the user
+    });
+  });
+}
+
+
+function editProduct(release) {
+  const editProductForm = document.createElement("form");
+  editProductForm.id = "edit-product-form";
+  editProductForm.classList.add("form-product");
+
+
+  
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Título:";
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.name = "title";
+  titleInput.required = true;
+  titleInput.value = release.title;
+
+  const artistLabel = document.createElement("label");
+  artistLabel.textContent = "Artista:";
+  const artistInput = document.createElement("input");
+  artistInput.type = "text";
+  artistInput.name = "artist";
+  artistInput.required = true;
+  artistInput.value = release.artist;
+
+  const genreLabel = document.createElement("label");
+  genreLabel.textContent = "Gênero:";
+  const genreInput = document.createElement("input");
+  genreInput.type = "text";
+  genreInput.name = "genre";
+  genreInput.required = true;
+  genreInput.value = release.genre;
+
+  const yearLabel = document.createElement("label");
+  yearLabel.textContent = "Ano:";
+  const yearInput = document.createElement("input");
+  yearInput.type = "number";
+  yearInput.name = "year";
+  yearInput.required = true;
+  yearInput.value = release.year;
+
+  const priceLabel = document.createElement("label");
+  priceLabel.textContent = "Preço:";
+  const priceInput = document.createElement("input");
+  priceInput.type = "number";
+  priceInput.name = "price";
+  priceInput.step = "0.01";
+  priceInput.required = true;
+  priceInput.value = release.price;
+
+  const descriptionLabel = document.createElement("label");
+  descriptionLabel.textContent = "Descrição:";
+  const descriptionInput = document.createElement("textarea");
+  descriptionInput.name = "description";
+  descriptionInput.required = true;
+  descriptionInput.value = release.description;
+
+  const imageUrlLabel = document.createElement("label");
+  imageUrlLabel.textContent = "URL da imagem:";
+  const imageUrlInput = document.createElement("input");
+  imageUrlInput.type = "text";
+  imageUrlInput.name = "imageUrl";
+  imageUrlInput.required = true;
+  imageUrlInput.value = release.imageUrl;
+
+  const stockLabel = document.createElement("label");
+  stockLabel.textContent = "Estoque:";
+  const stockInput = document.createElement("input");
+  stockInput.type = "number";
+  stockInput.name = "stock";
+  stockInput.required = true;
+  stockInput.value = release.stock;
+
+  const quantitySoldLabel = document.createElement("label");
+  quantitySoldLabel.textContent = "Quantidade Vendida:";
+  const quantitySoldInput = document.createElement("input");
+  quantitySoldInput.type = "number";
+  quantitySoldInput.name = "quantitySold";
+  quantitySoldInput.required = true;
+  quantitySoldInput.value = release.quantity_sold;
+
+  const updateButton = document.createElement("button");
+  updateButton.type = "submit";
+  updateButton.textContent = "Atualizar";
+
+  editProductForm.appendChild(titleLabel);
+  editProductForm.appendChild(titleInput);
+  editProductForm.appendChild(artistLabel);
+  editProductForm.appendChild(artistInput);
+  editProductForm.appendChild(genreLabel);
+  editProductForm.appendChild(genreInput);
+  editProductForm.appendChild(yearLabel);
+  editProductForm.appendChild(yearInput);
+  editProductForm.appendChild(priceLabel);
+  editProductForm.appendChild(priceInput);
+  editProductForm.appendChild(descriptionLabel);
+  editProductForm.appendChild(descriptionInput);
+  editProductForm.appendChild(imageUrlLabel);
+  editProductForm.appendChild(imageUrlInput);
+  editProductForm.appendChild(stockLabel);
+  editProductForm.appendChild(stockInput);
+  editProductForm.appendChild(quantitySoldLabel);
+  editProductForm.appendChild(quantitySoldInput);
+  editProductForm.appendChild(updateButton);
+
+  const vinylContainer = document.querySelector(".form-product");
+  vinylContainer.appendChild(editProductForm);
+
+  // Add event listener to submit button
+  editProductForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const updatedProduct = {
+      title: titleInput.value,
+      artist: artistInput.value,
+      genre: genreInput.value,
+      year: parseInt(yearInput.value),
+      price: parseFloat(priceInput.value),
+      description: descriptionInput.value,
+      imageUrl: imageUrlInput.value,
+      stock: parseInt(stockInput.value),
+      quantity_sold: parseInt(quantitySoldInput.value)
+    };
+
+    const token = localStorage.getItem("token-iusabndkjanbksd");
+    if (!token) {
+      return;
+    }
+
+    fetch(`http://localhost:4242/api/products/${release.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedProduct)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Product updated successfully:", data);
+      editProductForm.reset();
+      // Show success message or redirect to another page
+    })
+    .catch(error => {
+     console.error("Error updating product:", error);
+      // Show error message to the user
+    });
+  });
+}
+
+
+function showAddProductForm() {
+  let addProductForm = document.getElementById("add-product-form");
+
+  if (addProductForm) {
+    addProductForm.remove();
+    return;
+  }
+
+  addProductForm = document.createElement("form");
+  addProductForm.id = "add-product-form";
+  addProductForm.classList.add("form-product");
+
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Título:";
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.name = "title";
+  titleInput.required = true;
+
+  const artistLabel = document.createElement("label");
+  artistLabel.textContent = "Artista:";
+  const artistInput = document.createElement("input");
+  artistInput.type = "text";
+  artistInput.name = "artist";
+  artistInput.required = true;
+
+  const genreLabel = document.createElement("label");
+  genreLabel.textContent = "Gênero:";
+  const genreInput = document.createElement("input");
+  genreInput.type = "text";
+  genreInput.name = "genre";
+  genreInput.required = true;
+
+  const yearLabel = document.createElement("label");
+  yearLabel.textContent = "Ano:";
+  const yearInput = document.createElement("input");
+  yearInput.type = "number";
+  yearInput.name = "year";
+  yearInput.required = true;
+
+  const priceLabel = document.createElement("label");
+  priceLabel.textContent = "Preço:";
+  const priceInput = document.createElement("input");
+  priceInput.type = "number";
+  priceInput.name = "price";
+  priceInput.step = "0.01";
+  priceInput.required = true;
+
+  const descriptionLabel = document.createElement("label");
+  descriptionLabel.textContent = "Descrição:";
+  const descriptionInput = document.createElement("textarea");
+  descriptionInput.name = "description";
+  descriptionInput.required = true;
+
+  const imageUrlLabel = document.createElement("label");
+  imageUrlLabel.textContent = "URL da imagem:";
+  const imageUrlInput = document.createElement("input");
+  imageUrlInput.type = "text";
+  imageUrlInput.name = "imageUrl";
+  imageUrlInput.required = true;
+
+  const stockLabel = document.createElement("label");
+  stockLabel.textContent = "Estoque:";
+  const stockInput = document.createElement("input");
+  stockInput.type = "number";
+  stockInput.name = "stock";
+  stockInput.required = true;
+
+  const quantitySoldLabel = document.createElement("label");
+  quantitySoldLabel.textContent = "Quantidade Vendida:";
+  const quantitySoldInput = document.createElement("input");
+  quantitySoldInput.type = "number";
+  quantitySoldInput.name = "quantitySold";
+  quantitySoldInput.required = true;
+
+  const addButton = document.createElement("button");
+  addButton.type = "submit";
+  addButton.textContent = "Adicionar Produto";
+
+  addProductForm.appendChild(titleLabel);
+  addProductForm.appendChild(titleInput);
+  addProductForm.appendChild(artistLabel);
+  addProductForm.appendChild(artistInput);
+  addProductForm.appendChild(genreLabel);
+  addProductForm.appendChild(genreInput);
+  addProductForm.appendChild(yearLabel);
+  addProductForm.appendChild(yearInput);
+  addProductForm.appendChild(priceLabel);
+  addProductForm.appendChild(priceInput);
+  addProductForm.appendChild(descriptionLabel);
+  addProductForm.appendChild(descriptionInput);
+  addProductForm.appendChild(imageUrlLabel);
+  addProductForm.appendChild(imageUrlInput);
+  addProductForm.appendChild(stockLabel);
+  addProductForm.appendChild(stockInput);
+  addProductForm.appendChild(quantitySoldLabel);
+  addProductForm.appendChild(quantitySoldInput);
+  addProductForm.appendChild(addButton);
+
+  const vinylContainer = document.querySelector(".form-product");
+  vinylContainer.appendChild(addProductForm);
+
+  // Add event listener to submit button
+  addProductForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const product = {
+      title: titleInput.value,
+      artist: artistInput.value,
+      genre: genreInput.value,
+      year: parseInt(yearInput.value),
+      price: parseFloat(priceInput.value),
+      description: descriptionInput.value,
+      imageUrl: imageUrlInput.value,
+      stock: parseInt(stockInput.value),
+      quantity_sold: parseInt(quantitySoldInput.value)
+    };
+
+    const token = localStorage.getItem("token-iusabndkjanbksd");
+    if (!token) {
+      return;
+    }
+
+    fetch("http://localhost:4242/api/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(product)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Product added successfully:", data);
+      addProductForm.reset();
+      // Show success message or redirect to another page
+    })
+    .catch(error => {
+      console.error("Error adding product:", error);
+      // Show error message to the user
+    });
+  });
+}
+
+
+function addProduct() {
+  const productForm = document.getElementById("add-product-form");
+  const title = document.querySelector("#add-product-form input[name='title']").value;
+  const artist = document.querySelector("#add-product-form input[name='artist']").value;
+  const genre = document.querySelector("#add-product-form input[name='genre']").value;
+  const year = parseInt(document.querySelector("#add-product-form input[name='year']").value);
+  const price = parseFloat(document.querySelector("#add-product-form input[name='price']").value);
+  const description = document.querySelector("#add-product-form textarea[name='description']").value;
+  const imageUrl = document.querySelector("#add-product-form input[name='imageUrl']").value;
+  const stock = parseInt(document.querySelector("#add-product-form input[name='stock']").value);
+  const quantitySold = parseInt(document.querySelector("#add-product-form input[name='quantitySold']").value);
+
+  const product = {
+    title: title,
+    artist: artist,
+    genre: genre,
+    year: year,
+    price: price,
+    description: description,
+    imageUrl: imageUrl,
+    stock: stock,
+    quantity_sold: quantitySold
+  };
+
+  const token = localStorage.getItem("token-iusabndkjanbksd");
+  if (!token) {
+    return;
+  }
+
+  // Send POST request to the API
+  fetch("http://localhost:4242/api/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(product)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Product added successfully:", data);
+    // Reset form
+    document.getElementById("add-product-form").reset();
+    // Show success message or redirect to another page
+  })
+  .catch(error => {
+    console.error("Error adding product:", error);
+    // Show error message to the user
+  });
+}
+
+
+// Function to delete a product by ID
+function deleteProduct(id) {
+  if (confirm("Tem certeza de que deseja excluir este produto?")) {
+    fetch(`http://localhost:4242/api/products/${id}`, {
+      method: "DELETE"
+    })
+      .then(() => {
+        console.log("Produto excluído com sucesso");
+        loadVinylsAdmin(); // Recarrega os produtos após a exclusão
+      })
+      .catch((error) => {
+        console.error("Erro ao excluir produto:", error);
+      });
+  }
+}
+
+
+</script>
+<style>
+
+.form-product {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-product label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-product input[type="text"],
+.form-product input[type="number"],
+.form-product textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.form-product textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+.form-product button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #337ab7;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-product button[type="submit"]:hover {
+  background-color: #23527c;
+}
+
+.form-product .button.secondary {
+  background-color: #ccc;
+}
+
+.form-product .button.secondary:hover {
+  background-color: #aaa;
+}
+
+
+
+
+</style>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Meo U Vinil E-commerce</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      /* CSS Styles */
+      #featured-releases {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .vinyl {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .product-card {
+        width: 300px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin: 10px;
+        border: 1px solid #ccc;
+      }
+
+      .product-card:hover {
+        transform: scale(1.05);
+      }
+
+      .product-image img {
+        width: 100%;
+        height: auto;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+
+      .product-details {
+        padding: 15px;
+        text-align: left;
+        transition: transform 0.3s;
+        transform: translateY(0);
+      }
+
+      .product-card:hover {
+        transform: scale(1.06);
+      }
+
+      .product-details h3 {
+        font-size: 20px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .product-details p {
+        margin: 0;
+        color: #777;
+      }
+
+      .product-details .artist {
+        font-weight: bold;
+      }
+
+      .product-details .genre {
+        margin-top: 8px;
+      }
+
+      .price-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .price-container .price {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .price-container .cart-button {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .price-container .cart-button:hover {
+        transform: scale(1.2);
+      }
+
+      .price-container .cart-button i {
+        font-size: 24px;
+        color: #333;
+      }
+
+      .price-container .cart-button i:hover {
+        color: red;
+      }
+      .cart {
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .cart h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      .cart-item .cart-item-image {
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+      }
+
+      .cart-item-info {
+        flex-grow: 1;
+      }
+
+      .cart-item-info h4 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .cart-item-info p {
+        margin: 0;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .cart-item-quantity {
+        display: flex;
+        align-items: center;
+      }
+
+      .cart-item-quantity .quantity-input {
+        width: 50px;
+        padding: 5px;
+        margin-right: 10px;
+      }
+
+      .cart-item-delete {
+        display: flex;
+        align-items: center;
+      }
+
+      .cart-item-delete .delete-button {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        margin-left: 10px;
+        font-size: 16px;
+      }
+
+      .cart-item-delete .delete-button:hover {
+        color: red;
+      }
+
+      .checkout-btn {
+        display: block;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .checkout-btn:hover {
+        background-color: #555;
+      }
+      .cart {
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .cart h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      .cart-item .cart-item-image {
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+      }
+
+      .cart-item-info {
+        flex-grow: 1;
+      }
+
+      .cart-item-info h4 {
+        margin: 0;
+        font-size: 16px;
+        flex-grow: 1;
+      }
+
+      .cart-item-info p {
+        margin: 0;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .cart-item-info .quantity-input {
+        width: 50px;
+        padding: 5px;
+        margin-right: 10px;
+      }
+
+      .cart-item-info .delete-button {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        margin-left: 10px;
+        font-size: 16px;
+      }
+
+      .cart-item-info .delete-button:hover {
+        color: red;
+      }
+
+      .checkout-btn {
+        display: block;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .checkout-btn:hover {
+        background-color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="featured-releases">
+      <h2>Featured Our Favorite Releases</h2>
+      <div class="vinyl"></div>
+    </section>
+    <div class="cart">
+      <h2>Shopping Cart</h2>
+      <div id="cart-item">
+        <!-- Cart items will be dynamically loaded here -->
+      </div>
+      <button class="checkout-btn" onclick="checkout()">checkout</button>
+    </div>
+    
+    <script>
+      // Variable to store the number of items in the cart
+      let cartItemCount = 0;
+
+      // Function to load vinyl items from the server
+      function loadVinyls() {
+        fetch("http://localhost:4242/api/products")
+          .then((response) => response.json())
+          .then((data) => {
+            const vinylContainer = document.querySelector(".vinyl");
+            vinylContainer.innerHTML = "";
+            data.forEach((release) => {
+              const productCard = document.createElement("div");
+              productCard.classList.add("product-card");
+
+              const productImage = document.createElement("div");
+              productImage.classList.add("product-image");
+              const image = document.createElement("img");
+              image.src = release.imageUrl;
+              image.alt = "Product Image";
+              productImage.appendChild(image);
+              productCard.appendChild(productImage);
+
+              const productDetails = document.createElement("div");
+              productDetails.classList.add("product-details");
+
+              const title = document.createElement("h3");
+              title.classList.add("title");
+              title.textContent = release.title;
+              productDetails.appendChild(title);
+
+              const artist = document.createElement("p");
+              artist.classList.add("artist");
+              artist.textContent = release.artist;
+              productDetails.appendChild(artist);
+
+              const genre = document.createElement("p");
+              genre.classList.add("genre");
+              genre.textContent = release.genre;
+              productDetails.appendChild(genre);
+
+              const priceContainer = document.createElement("div");
+              priceContainer.classList.add("price-container");
+
+              const price = document.createElement("p");
+              price.classList.add("price");
+              price.textContent = "$" + release.price.toFixed(2);
+              priceContainer.appendChild(price);
+
+              const cartButton = document.createElement("button");
+              cartButton.classList.add("cart-button");
+              const cartIcon = document.createElement("i");
+              cartIcon.classList.add("fas", "fa-shopping-cart");
+              cartButton.appendChild(cartIcon);
+              priceContainer.appendChild(cartButton);
+
+              productDetails.appendChild(priceContainer);
+              productCard.appendChild(productDetails);
+              vinylContainer.appendChild(productCard);
+
+              // Add event listener to cart button
+              cartButton.addEventListener("click", () => {
+                addToCart(release);
+              });
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading featured releases:", error);
+          });
+      }
+
+      // Function to add an item to the cart
+      function addToCart(vinyl) {
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const userId = userData.id;
+
+        fetch(`http://localhost:4242/api/cart-items/${userId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const existingCartItem = data.find(
+              (item) => item.product_id === vinyl.id
+            );
+            if (existingCartItem) {
+              const updatedQuantity = existingCartItem.quantity + 1;
+              updateCartItemQuantity(existingCartItem.id, updatedQuantity);
+            } else {
+              fetch("http://localhost:4242/api/cart-items", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  user_id: userId,
+                  product_id: vinyl.id,
+                  quantity: 1,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Item added to cart:", data);
+                  loadCartItems();
+                })
+                .catch((error) => {
+                  console.error("Error adding item to cart:", error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading cart items:", error);
+          });
+      }
+
+      function loadCartItems() {
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const userId = userData.id;
+
+        fetch(`http://localhost:4242/api/cart-items/${userId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const cartItemContainer = document.getElementById("cart-item");
+            cartItemContainer.innerHTML = "";
+
+            data.forEach((cartItem) => {
+              fetch(`http://localhost:4242/api/products/${cartItem.product_id}`)
+                .then((response) => response.json())
+                .then((product) => {
+                  const cartItemDiv = document.createElement("div");
+                  cartItemDiv.classList.add("cart-item");
+                  cartItemDiv.setAttribute("data-product-id", product.id);
+
+                  const productImage = document.createElement("img");
+                  productImage.src = product.imageUrl;
+                  productImage.alt = "Product Image";
+                  productImage.classList.add("cart-item-image");
+                  cartItemDiv.appendChild(productImage);
+
+                  const productInfoDiv = document.createElement("div");
+                  productInfoDiv.classList.add("cart-item-info");
+
+                  const productName = document.createElement("h4");
+                  productName.textContent = product.title;
+                  productInfoDiv.appendChild(productName);
+
+                  const artistName = document.createElement("p");
+                  artistName.textContent = "Artist: " + product.artist;
+                  productInfoDiv.appendChild(artistName);
+
+                  const genre = document.createElement("p");
+                  genre.textContent = "Genre: " + product.genre;
+                  productInfoDiv.appendChild(genre);
+
+                  const price = document.createElement("p");
+                  price.textContent = "Price: $" + product.price.toFixed(2);
+                  productInfoDiv.appendChild(price);
+
+                  const quantityInput = document.createElement("input");
+                  quantityInput.type = "number";
+                  quantityInput.value = cartItem.quantity;
+                  quantityInput.classList.add("quantity-input");
+                  quantityInput.addEventListener("change", (event) =>
+                    updateQuantity(cartItem.id, event.target.value)
+                  );
+                  productInfoDiv.appendChild(quantityInput);
+
+                  const deleteButton = document.createElement("button");
+                  deleteButton.classList.add("delete-button");
+                  deleteButton.innerHTML = "&#10006;";
+                  deleteButton.addEventListener("click", () =>
+                    deleteCartItem(cartItem.id)
+                  );
+                  productInfoDiv.appendChild(deleteButton);
+
+                  cartItemDiv.appendChild(productInfoDiv);
+
+                  cartItemContainer.appendChild(cartItemDiv);
+                })
+                .catch((error) => {
+                  console.error("Error loading product:", error);
+                });
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading cart items:", error);
+          });
+      }
+
+      function updateQuantity(itemId, newQuantity) {
+        if (newQuantity >= 1) {
+          updateCartItemQuantity(itemId, newQuantity);
+        }
+      }
+
+      function updateCartItemQuantity(itemId, newQuantity) {
+        fetch(`http://localhost:4242/api/cart-items/${itemId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            quantity: newQuantity,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Item quantity updated:", data);
+            loadCartItems();
+          })
+          .catch((error) => {
+            console.error("Error updating item quantity:", error);
+          });
+      }
+
+      function deleteCartItem(itemId) {
+        fetch(`http://localhost:4242/api/cart-items/${itemId}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            console.log("Item deleted:", itemId);
+            loadCartItems();
+          })
+          .catch((error) => {
+            console.error("Error deleting item:", error);
+          });
+      }
+
+      function checkout() {
+        // Simulate a successful payment process
+        // You can replace this with your actual payment processing logic
+        const simulatePaymentProcess = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve();
+          }, 2000);
+        });
+
+        // Clear the cart items and update product stock after successful payment
+        simulatePaymentProcess.then(() => {
+          const userData = JSON.parse(localStorage.getItem("user"));
+          const userId = userData.id;
+
+          fetch(`http://localhost:4242/api/cart/${userId}/items`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              // Update product stock
+              updateProductStockInCheckout();
+              console.log("Cart cleared");
+              loadCartItems();
+              showPaymentSuccessMessage();
+            })
+            .catch((error) => {
+              console.error("Error clearing cart:", error);
+            });
+        });
+      }
+
+      function updateProductStockInCheckout() {
+        const cartItems = document.querySelectorAll(".cart-item");
+
+        cartItems.forEach((cartItem) => {
+          const productId = cartItem.getAttribute("data-product-id");
+          const quantityInput = cartItem.querySelector(".quantity-input");
+          const quantity = parseInt(quantityInput.value);
+
+          fetch(`http://localhost:4242/api/products/${productId}`)
+            .then((response) => response.json())
+            .then((product) => {
+              const updatedStock = product.stock - quantity;
+              alert(`Updated stock: ${updatedStock}`);
+              fetch(`http://localhost:4242/api/products/${productId}/stock`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  stock: updatedStock,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Product stock updated:", data);
+                })
+                .catch((error) => {
+                  console.error("Error updating product stock:", error);
+                });
+            })
+            .catch((error) => {
+              console.error("Error retrieving product:", error);
+            });
+        });
+      }
+
+      // Load vinyl items and cart items on page load
+      window.onload = function () {
+        loadVinyls();
+        loadCartItems();
+      };
+    </script>
+  </body>
+</html>

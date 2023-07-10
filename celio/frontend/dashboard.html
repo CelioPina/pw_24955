@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .user-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .user-list li {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-list .user-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-list .user-info .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .user-list .user-info .user-avatar i {
+      color: #fff;
+    }
+
+    .user-list .user-info .user-name {
+      font-weight: bold;
+    }
+
+    .user-list .user-info .user-email {
+      color: #666;
+    }
+
+    .user-list .user-role {
+      font-weight: bold;
+      padding: 6px 12px;
+      background-color: #dcdcdc;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .delete-button {
+      background-color: #ff5f5f;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .register-form {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-form input[type="text"],
+    .register-form input[type="email"],
+    .register-form input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .register-form button[type="submit"] {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<header>
+    <div class="logo">
+        <a href="indexx.html"><img src="./img/logo.png" alt="Vinyl Records Logo"></a>
+       <h1><a href="indexx.html">VINYL RECORDS</a></h1>
+       <link rel="stylesheet" type="text/css" href="style.css">
+     </div>
+     <div class="search-bar">
+       <input type="text" id="search-input" placeholder="Search...">
+       <button id="search-btn" aria-label="Search">
+         <i class="fas fa-search"></i>
+       </button>
+     </div>    
+     <div class="user-actions">
+       <button id="home-btn"> <i class="fas fa-home"></i><a href="indexx.html">Home</a></button>
+     </div>
+   </header>
+<body>
+
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <ul class="user-list" id="user-list"></ul>
+
+    <div class="register-form">
+      <h2>Register User</h2>
+      <form id="register-form">
+        <input type="text" id="name" placeholder="Nome" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="register()" type="submit" >Register</button>
+      </form>
+      <p id="signupResult"></p>
+    </div>
+  </div>
+  <footer>
+    <p>&copy; 2023 Vinyl Records Store. All rights reserved.</p>
+  </footer>
+  
+  <script>
+    // Function to fetch and display users
+    function loadUsers() {
+      const userList = document.getElementById("user-list");
+      userList.innerHTML = "";
+
+      fetch("http://localhost:4242/api/user")
+        .then((response) => response.json())
+        .then((data) => {
+          data.forEach((user) => {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+              <div class="user-info">
+                <div class="user-avatar fas"> <i class="fas fa-user"></i></div>
+                <div>
+                  <div class="user-name">${user.name}</div>
+                  <div class="user-email">${user.email}</div>
+                </div>
+              </div>
+              <div class="user-role">${user.role == 1 ? "Administrador" : "Cliente"}</div>
+              <button class="delete-button" data-user-id="${user.id}">Eliminar</button>
+            `;
+
+            userList.appendChild(listItem);
+          });
+        })
+        .catch((error) => {
+          console.error("Error loading users:", error);
+        });
+    }
+
+    // Function to delete a user
+    function deleteUser(userId) {
+      fetch(`http://localhost:4242/api/user/${userId}`, {
+        method: "DELETE",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("User deleted successfully:", data);
+          loadUsers(); // Refresh the user list
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
+        });
+    }
+
+    // Add event listener to delete buttons
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target.classList.contains("delete-button")) {
+        const userId = target.getAttribute("data-user-id");
+        deleteUser(userId);
+      }
+    });
+
+    // Load users when the page is loaded
+    window.addEventListener("DOMContentLoaded", loadUsers);
+
+    function register() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const name = document.getElementById('name').value;
+  const role = 1;
+
+  const url = 'http://localhost:4242/api/user/register';
+
+  const requestBody = { name, email, password,  role };
+
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Registration failed');
+      }
+    })
+    .then((data) => {
+      // Registration successful
+      const signupResult = document.getElementById('signupResult');
+      signupResult.textContent = 'Registo bem-sucedido';
+      signupResult.classList.remove('error-message');
+      signupResult.classList.add('success-message');
+      alert("Registration successful");
+      window.location.href = "login.html";
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      const signupResult = document.getElementById('signupResult');
+      signupResult.textContent =
+        'O registo falhou. Por favor, tente novamente.';
+      signupResult.classList.remove('success-message');
+      signupResult.classList.add('error-message');
+    });
+}
+  </script>
+</body>
+</html>
